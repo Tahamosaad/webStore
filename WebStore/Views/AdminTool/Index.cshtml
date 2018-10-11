@@ -1,0 +1,51 @@
+﻿@*@model WebStore.Models.MainCategories*@
+@model List<WebStore.Models.SubCategories>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="form-horizontal">
+        <h4>Categories Details</h4>
+        <hr />
+    <div>
+        <button>
+            @Html.ActionLink("Add New Main Categories", "AddCategory")
+        </button>
+        <button>
+            @Html.ActionLink("Add New sub Categories", "SubCategory")
+        </button>
+    </div>
+    <hr />
+    <div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+
+
+                    <th>Main Categories</th>
+                    <th>Sub Categories</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+            {
+                    <tr>
+
+                        <td>@item.MainCategories.MainCategoryName</td>
+
+                        <td>@item.SubCategoryName</td>
+
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+<div>
+    @Html.ActionLink("Back", "Home")
+</div>
