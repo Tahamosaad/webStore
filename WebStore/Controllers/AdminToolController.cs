@@ -44,9 +44,18 @@ namespace WebStore.Controllers
         }
         public ActionResult SubCategory()
         {
+            List<AttributeItem> itemlist = new List<AttributeItem>();
+            itemlist.Add(new AttributeItem { AttributeID = 1, AttributeName = "Has Size", isSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 2, AttributeName = "Has Color", isSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 3, AttributeName = "Has High", isSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 4, AttributeName = "Has Wight", isSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 5, AttributeName = "Has Width", isSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 6, AttributeName = "Has Description", isSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 7, AttributeName = "Has Gender", isSelected = true });
+
             List<MainCategories> MainCat_List = db.MainCategories.ToList();
             ViewBag.CategoriesList = new SelectList(MainCat_List, "MainCategoryID", "MainCategoryName");
-            ViewBag.Attribute_idx = db.Attributes_Index.ToList();
+            ViewBag.ItemAttribute = itemlist;
             return View();
         }
         [HttpPost]

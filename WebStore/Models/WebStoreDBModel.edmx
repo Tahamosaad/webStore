@@ -10,35 +10,14 @@
             <PropertyRef Name="AttributeID" />
           </Key>
           <Property Name="AttributeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Subcat_ID" Type="int" Nullable="false" />
           <Property Name="Size" Type="float" />
           <Property Name="Wight" Type="float" />
           <Property Name="Width" Type="float" />
-          <Property Name="Hight" Type="float" />
+          <Property Name="High" Type="float" />
           <Property Name="Color" Type="nvarchar" MaxLength="50" />
           <Property Name="Gender" Type="bit" />
           <Property Name="Describtion" Type="text" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="Attributes_Index">
-          <Key>
-            <PropertyRef Name="SubCat_ID" />
-            <PropertyRef Name="has_Size" />
-            <PropertyRef Name="has_Wight" />
-            <PropertyRef Name="has_Hight" />
-            <PropertyRef Name="has_Width" />
-            <PropertyRef Name="has_Color" />
-            <PropertyRef Name="has_Gender" />
-            <PropertyRef Name="has_Describtion" />
-          </Key>
-          <Property Name="SubCat_ID" Type="int" Nullable="false" />
-          <Property Name="has_Size" Type="bit" Nullable="false" />
-          <Property Name="has_Wight" Type="bit" Nullable="false" />
-          <Property Name="has_Hight" Type="bit" Nullable="false" />
-          <Property Name="has_Width" Type="bit" Nullable="false" />
-          <Property Name="has_Color" Type="bit" Nullable="false" />
-          <Property Name="has_Gender" Type="bit" Nullable="false" />
-          <Property Name="has_Describtion" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="MainCategories">
           <Key>
@@ -100,15 +79,15 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
-        <Association Name="FK_Attributes_Index_SubCategories">
+        <Association Name="FK_Attributes_SubCategories">
           <End Role="SubCategories" Type="Self.SubCategories" Multiplicity="1" />
-          <End Role="Attributes_Index" Type="Self.Attributes_Index" Multiplicity="*" />
+          <End Role="Attributes" Type="Self.Attributes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SubCategories">
               <PropertyRef Name="SubCategoryID" />
             </Principal>
-            <Dependent Role="Attributes_Index">
-              <PropertyRef Name="SubCat_ID" />
+            <Dependent Role="Attributes">
+              <PropertyRef Name="Subcat_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -236,21 +215,9 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
           <EntitySet Name="Products_Images" EntityType="Self.Products_Images" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubCategories" EntityType="Self.SubCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Attributes_Index" EntityType="Self.Attributes_Index" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Attributes_Index].[SubCat_ID] AS [SubCat_ID], 
-    [Attributes_Index].[has_Size] AS [has_Size], 
-    [Attributes_Index].[has_Wight] AS [has_Wight], 
-    [Attributes_Index].[has_Hight] AS [has_Hight], 
-    [Attributes_Index].[has_Width] AS [has_Width], 
-    [Attributes_Index].[has_Color] AS [has_Color], 
-    [Attributes_Index].[has_Gender] AS [has_Gender], 
-    [Attributes_Index].[has_Describtion] AS [has_Describtion]
-    FROM [dbo].[Attributes_Index] AS [Attributes_Index]</DefiningQuery>
-          </EntitySet>
-          <AssociationSet Name="FK_Attributes_Index_SubCategories" Association="Self.FK_Attributes_Index_SubCategories">
+          <AssociationSet Name="FK_Attributes_SubCategories" Association="Self.FK_Attributes_SubCategories">
             <End Role="SubCategories" EntitySet="SubCategories" />
-            <End Role="Attributes_Index" EntitySet="Attributes_Index" />
+            <End Role="Attributes" EntitySet="Attributes" />
           </AssociationSet>
           <AssociationSet Name="FK_Products_Attributes_Attributes" Association="Self.FK_Products_Attributes_Attributes">
             <End Role="Attributes" EntitySet="Attributes" />
@@ -322,7 +289,10 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
           <EntitySet Name="Products" EntityType="WebStoreDBModel.Products" />
           <EntitySet Name="SubCategories" EntityType="WebStoreDBModel.SubCategories" />
           <EntitySet Name="sysdiagrams" EntityType="WebStoreDBModel.sysdiagrams" />
-          <EntitySet Name="Attributes_Index" EntityType="WebStoreDBModel.Attributes_Index" />
+          <AssociationSet Name="FK_Attributes_SubCategories" Association="WebStoreDBModel.FK_Attributes_SubCategories">
+            <End Role="SubCategories" EntitySet="SubCategories" />
+            <End Role="Attributes" EntitySet="Attributes" />
+          </AssociationSet>
           <AssociationSet Name="FK_Products_MainCategories" Association="WebStoreDBModel.FK_Products_MainCategories">
             <End Role="MainCategories" EntitySet="MainCategories" />
             <End Role="Products" EntitySet="Products" />
@@ -335,10 +305,6 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
             <End Role="SubCategories" EntitySet="SubCategories" />
             <End Role="Products" EntitySet="Products" />
           </AssociationSet>
-          <AssociationSet Name="FK_Attributes_Index_SubCategories" Association="WebStoreDBModel.FK_Attributes_Index_SubCategories">
-            <End Role="SubCategories" EntitySet="SubCategories" />
-            <End Role="Attributes_Index" EntitySet="Attributes_Index" />
-          </AssociationSet>
           <AssociationSet Name="Products_Attributes" Association="WebStoreDBModel.Products_Attributes">
             <End Role="Attributes" EntitySet="Attributes" />
             <End Role="Products" EntitySet="Products" />
@@ -347,7 +313,7 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
             <End Role="ProductImages" EntitySet="ProductImages" />
             <End Role="Products" EntitySet="Products" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <ComplexType Name="sp_helpdiagramdefinition_Result">
           <Property Type="Int32" Name="version" Nullable="true" />
           <Property Type="Binary" Name="definition" Nullable="true" />
@@ -364,13 +330,15 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
             <PropertyRef Name="AttributeID" />
           </Key>
           <Property Name="AttributeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Subcat_ID" Type="Int32" Nullable="false" />
           <Property Name="Size" Type="Double" />
           <Property Name="Wight" Type="Double" />
           <Property Name="Width" Type="Double" />
-          <Property Name="Hight" Type="Double" />
+          <Property Name="High" Type="Double" />
           <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Gender" Type="Boolean" />
           <Property Name="Describtion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SubCategories" Relationship="WebStoreDBModel.FK_Attributes_SubCategories" FromRole="Attributes" ToRole="SubCategories" />
           <NavigationProperty Name="Products" Relationship="WebStoreDBModel.Products_Attributes" FromRole="Attributes" ToRole="Products" />
         </EntityType>
         <EntityType Name="MainCategories">
@@ -413,9 +381,9 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
           <Property Name="SubCategoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SubCategoryName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="MainCat_ID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Attributes" Relationship="WebStoreDBModel.FK_Attributes_SubCategories" FromRole="SubCategories" ToRole="Attributes" />
           <NavigationProperty Name="MainCategories" Relationship="WebStoreDBModel.FK_SubCategories_MainCategories" FromRole="SubCategories" ToRole="MainCategories" />
           <NavigationProperty Name="Products" Relationship="WebStoreDBModel.FK_Products_SubCategories" FromRole="SubCategories" ToRole="Products" />
-          <NavigationProperty Name="Attributes_Index" Relationship="WebStoreDBModel.FK_Attributes_Index_SubCategories" FromRole="SubCategories" ToRole="Attributes_Index" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -427,27 +395,18 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
-        <EntityType Name="Attributes_Index">
-          <Key>
-            <PropertyRef Name="SubCat_ID" />
-            <PropertyRef Name="has_Size" />
-            <PropertyRef Name="has_Wight" />
-            <PropertyRef Name="has_Hight" />
-            <PropertyRef Name="has_Width" />
-            <PropertyRef Name="has_Color" />
-            <PropertyRef Name="has_Gender" />
-            <PropertyRef Name="has_Describtion" />
-          </Key>
-          <Property Name="SubCat_ID" Type="Int32" Nullable="false" />
-          <Property Name="has_Size" Type="Boolean" Nullable="false" />
-          <Property Name="has_Wight" Type="Boolean" Nullable="false" />
-          <Property Name="has_Hight" Type="Boolean" Nullable="false" />
-          <Property Name="has_Width" Type="Boolean" Nullable="false" />
-          <Property Name="has_Color" Type="Boolean" Nullable="false" />
-          <Property Name="has_Gender" Type="Boolean" Nullable="false" />
-          <Property Name="has_Describtion" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="SubCategories" Relationship="WebStoreDBModel.FK_Attributes_Index_SubCategories" FromRole="Attributes_Index" ToRole="SubCategories" />
-        </EntityType>
+        <Association Name="FK_Attributes_SubCategories">
+          <End Type="WebStoreDBModel.SubCategories" Role="SubCategories" Multiplicity="1" />
+          <End Type="WebStoreDBModel.Attributes" Role="Attributes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubCategories">
+              <PropertyRef Name="SubCategoryID" />
+            </Principal>
+            <Dependent Role="Attributes">
+              <PropertyRef Name="Subcat_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Products_MainCategories">
           <End Type="WebStoreDBModel.MainCategories" Role="MainCategories" Multiplicity="1" />
           <End Type="WebStoreDBModel.Products" Role="Products" Multiplicity="*" />
@@ -484,18 +443,6 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Attributes_Index_SubCategories">
-          <End Type="WebStoreDBModel.SubCategories" Role="SubCategories" Multiplicity="1" />
-          <End Type="WebStoreDBModel.Attributes_Index" Role="Attributes_Index" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SubCategories">
-              <PropertyRef Name="SubCategoryID" />
-            </Principal>
-            <Dependent Role="Attributes_Index">
-              <PropertyRef Name="SubCat_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="Products_Attributes">
           <End Type="WebStoreDBModel.Attributes" Role="Attributes" Multiplicity="*" />
           <End Type="WebStoreDBModel.Products" Role="Products" Multiplicity="*" />
@@ -504,7 +451,7 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
           <End Type="WebStoreDBModel.ProductImages" Role="ProductImages" Multiplicity="*" />
           <End Type="WebStoreDBModel.Products" Role="Products" Multiplicity="*" />
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -540,10 +487,11 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
                 <ScalarProperty Name="Describtion" ColumnName="Describtion" />
                 <ScalarProperty Name="Gender" ColumnName="Gender" />
                 <ScalarProperty Name="Color" ColumnName="Color" />
-                <ScalarProperty Name="Hight" ColumnName="Hight" />
+                <ScalarProperty Name="High" ColumnName="High" />
                 <ScalarProperty Name="Width" ColumnName="Width" />
                 <ScalarProperty Name="Wight" ColumnName="Wight" />
                 <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Subcat_ID" ColumnName="Subcat_ID" />
                 <ScalarProperty Name="AttributeID" ColumnName="AttributeID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -597,20 +545,6 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Attributes_Index">
-            <EntityTypeMapping TypeName="WebStoreDBModel.Attributes_Index">
-              <MappingFragment StoreEntitySet="Attributes_Index">
-                <ScalarProperty Name="has_Describtion" ColumnName="has_Describtion" />
-                <ScalarProperty Name="has_Gender" ColumnName="has_Gender" />
-                <ScalarProperty Name="has_Color" ColumnName="has_Color" />
-                <ScalarProperty Name="has_Width" ColumnName="has_Width" />
-                <ScalarProperty Name="has_Hight" ColumnName="has_Hight" />
-                <ScalarProperty Name="has_Wight" ColumnName="has_Wight" />
-                <ScalarProperty Name="has_Size" ColumnName="has_Size" />
-                <ScalarProperty Name="SubCat_ID" ColumnName="SubCat_ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <AssociationSetMapping Name="Products_Attributes" TypeName="WebStoreDBModel.Products_Attributes" StoreEntitySet="Products_Attributes">
             <EndProperty Name="Products">
               <ScalarProperty Name="ProductID" ColumnName="Product_ID" />
@@ -627,7 +561,7 @@ warning 6002: The table/view 'WebStoreDB.dbo.Attributes_Index' does not have a p
               <ScalarProperty Name="ImageID" ColumnName="Image_ID" />
             </EndProperty>
           </AssociationSetMapping>
-  </EntityContainerMapping>
+          </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->

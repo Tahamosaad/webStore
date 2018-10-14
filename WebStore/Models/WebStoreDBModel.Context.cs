@@ -33,7 +33,6 @@ namespace WebStore.Models
         public virtual DbSet<Products> Products { get; set; }
         public virtual DbSet<SubCategories> SubCategories { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
-        public virtual DbSet<Attributes_Index> Attributes_Index { get; set; }
     
         public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
         {

@@ -11,7 +11,8 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>Create SubCategories</h4>
+        <hr />
+        <h4 class="list-group-item-heading list-group-item active shadow-sm">Create SubCategories</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -27,31 +28,29 @@
                 @Html.ValidationMessageFor(model => model.SubCategoryName, "", new { @class = "text-danger" })
             </div>
         </div>
+     
         <div class="form-group">
-            @Html.LabelFor(model => model.Attributes_Index, htmlAttributes: new { @class = "control-label col-md-2" })
-
-            <div class="col-md-10">
-                @foreach (var item in ViewBag.Attribute_idx)
+            <ul class="list-group" id="itemlist">
+                <li class="list-group-item-heading list-group-item  ">
+                    <h4 class="list-group-item-text"> Select Attributes For Sub Categories</h4>
+                </li>
+                @foreach (var item in ViewBag.ItemAttribute)
                 {
-                    bool x = item.has_Size;
-                    @Html.CheckBox("has_Size", x)
-                    @*@Html.CheckBox("has_Wight", !x)*@
-                    @*@Html.CheckBox("has_Hight", x)
-                    @Html.CheckBox("has_Width", x)
-                    @Html.CheckBox("has_Color", x)
-                    @Html.CheckBox("has_Gender", x)
-                    @Html.CheckBox("has_Describtion", x)*@
-                   
 
+                    <li class="list-group-item">
+                        <div class="checkbox">
+                            <input type="checkbox" id="check_@item.AttributeID" checked="@item.isSelected" />
+                            <label for="check_@item.AttributeID">@item.AttributeName</label>
 
+                        </div>
+                    </li>
                 }
+                <li class="list-group-item">
+                    <a class="btn btn-success btn-block" onclick="saveList()" >updateitem</a>
+                </li>
+            </ul>
 
-            </div>
         </div>
-
-
-
-
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -64,3 +63,26 @@
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
+
+<script>
+    var saveList = function () {
+        
+        var arrItem = [];
+        var commasepratedIDs = "";
+        $("#itemlist li input[type=checkbox]").each(function (index, val) {
+            debugger
+            var checkid = $(val).attr("Id");
+            var arr = checkid.split('_');
+            var currentCheckboxid = arr[1];
+            var Ischecked = $("#" + checkid).is(":checked", true);
+            if (Ischecked) {
+                arrItem.push(currentCheckboxid);
+            }
+        })
+        if (arrItem.length !=0) {
+            commasepratedIDs = arrItem.toString();
+            $.ajax()
+        }
+
+    }
+</script>

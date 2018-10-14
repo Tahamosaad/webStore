@@ -14,22 +14,25 @@ namespace WebStore.Models
     
     public partial class Attributes
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Attributes()
         {
             this.Products = new HashSet<Products>();
         }
     
         public int AttributeID { get; set; }
+        public int Subcat_ID { get; set; }
         public Nullable<double> Size { get; set; }
         public Nullable<double> Wight { get; set; }
         public Nullable<double> Width { get; set; }
-        public Nullable<double> Hight { get; set; }
+        public Nullable<double> High { get; set; }
         public string Color { get; set; }
         public Nullable<bool> Gender { get; set; }
         public string Describtion { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public bool IsChecked { get; set; }
+        public virtual SubCategories SubCategories { get; set; }
         public virtual ICollection<Products> Products { get; set; }
+
     }
+    
+
 }
