@@ -9,7 +9,6 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
     <div class="form-horizontal">
         <hr />
         <h4 class="list-group-item-heading list-group-item active shadow-sm">Create SubCategories</h4>
@@ -30,31 +29,37 @@
         </div>
      
         <div class="form-group">
+
+
             <ul class="list-group" id="itemlist">
                 <li class="list-group-item-heading list-group-item  ">
                     <h4 class="list-group-item-text"> Select Attributes For Sub Categories</h4>
                 </li>
-                @foreach (var item in ViewBag.ItemAttribute)
+                @for (int i = 0; i < Model.selectedAttribute.Count; i++)
                 {
 
                     <li class="list-group-item">
                         <div class="checkbox">
-                            <input type="checkbox" id="check_@item.AttributeID" checked="@item.isSelected" />
-                            <label for="check_@item.AttributeID">@item.AttributeName</label>
+                            @Html.CheckBoxFor(model => model.selectedAttribute[i].IsSelected)
+                            @*<input type="checkbox" id="check_Attribute" checked= "@ViewBag.ItemAttribute[i].isSelected" />*@
+                            <label for="check_Attribute"> @Model.selectedAttribute[i].Attributename</label>
+                            @Html.HiddenFor(x => x.selectedAttribute[i].AttributeID)
+                            @Html.HiddenFor(x => x.selectedAttribute[i].Attributename)
+                            
 
                         </div>
                     </li>
                 }
-                <li class="list-group-item">
-                    <a class="btn btn-success btn-block" onclick="saveList()" >updateitem</a>
-                </li>
+                
             </ul>
 
         </div>
 
+        
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input id="btnSave"  type="submit" value="Create"   class="btn btn-default" />
             </div>
         </div>
     </div>
@@ -64,11 +69,12 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
-<script>
+@*<script>
     var saveList = function () {
         
         var arrItem = [];
         var commasepratedIDs = "";
+   
         $("#itemlist li input[type=checkbox]").each(function (index, val) {
             debugger
             var checkid = $(val).attr("Id");
@@ -79,10 +85,25 @@
                 arrItem.push(currentCheckboxid);
             }
         })
-        if (arrItem.length !=0) {
+        if (arrItem.length != 0) {
+            debugger
             commasepratedIDs = arrItem.toString();
-            $.ajax()
-        }
+            @Model.SelectedAttributes=arrItem;
 
-    }
-</script>
+            //$.ajax({
+            //    url: '/AdminTool/SubCategory',
+            //    Type: "POST",
+            //    data:{itemlist : commasepratedIDs},
+            //    success: function (data) {
+            //        if (data != "") {
+            //            alert(data);
+            //        }
+            //        else {
+            //            $("form").submit();
+            //        }
+            //    }
+            //});
+        }
+        
+        }
+</script>*@

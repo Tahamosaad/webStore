@@ -5,12 +5,19 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="WebStoreDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AttributeItem">
+          <Key>
+            <PropertyRef Name="AttributeID" />
+          </Key>
+          <Property Name="AttributeID" Type="int" Nullable="false" />
+          <Property Name="Attributename" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsSelected" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="Attributes">
           <Key>
             <PropertyRef Name="AttributeID" />
           </Key>
           <Property Name="AttributeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Subcat_ID" Type="int" Nullable="false" />
           <Property Name="Size" Type="float" />
           <Property Name="Wight" Type="float" />
           <Property Name="Width" Type="float" />
@@ -68,6 +75,7 @@
           <Property Name="SubCategoryID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SubCategoryName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="MainCat_ID" Type="int" Nullable="false" />
+          <Property Name="SelectedAttributes" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -79,18 +87,6 @@
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
-        <Association Name="FK_Attributes_SubCategories">
-          <End Role="SubCategories" Type="Self.SubCategories" Multiplicity="1" />
-          <End Role="Attributes" Type="Self.Attributes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SubCategories">
-              <PropertyRef Name="SubCategoryID" />
-            </Principal>
-            <Dependent Role="Attributes">
-              <PropertyRef Name="Subcat_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Products_Attributes_Attributes">
           <End Role="Attributes" Type="Self.Attributes" Multiplicity="1" />
           <End Role="Products_Attributes" Type="Self.Products_Attributes" Multiplicity="*" />
@@ -207,6 +203,7 @@
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="WebStoreDBModelStoreContainer">
+          <EntitySet Name="AttributeItem" EntityType="Self.AttributeItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attributes" EntityType="Self.Attributes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MainCategories" EntityType="Self.MainCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductImages" EntityType="Self.ProductImages" Schema="dbo" store:Type="Tables" />
@@ -215,10 +212,6 @@
           <EntitySet Name="Products_Images" EntityType="Self.Products_Images" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubCategories" EntityType="Self.SubCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Attributes_SubCategories" Association="Self.FK_Attributes_SubCategories">
-            <End Role="SubCategories" EntitySet="SubCategories" />
-            <End Role="Attributes" EntitySet="Attributes" />
-          </AssociationSet>
           <AssociationSet Name="FK_Products_Attributes_Attributes" Association="Self.FK_Products_Attributes_Attributes">
             <End Role="Attributes" EntitySet="Attributes" />
             <End Role="Products_Attributes" EntitySet="Products_Attributes" />
@@ -289,10 +282,6 @@
           <EntitySet Name="Products" EntityType="WebStoreDBModel.Products" />
           <EntitySet Name="SubCategories" EntityType="WebStoreDBModel.SubCategories" />
           <EntitySet Name="sysdiagrams" EntityType="WebStoreDBModel.sysdiagrams" />
-          <AssociationSet Name="FK_Attributes_SubCategories" Association="WebStoreDBModel.FK_Attributes_SubCategories">
-            <End Role="SubCategories" EntitySet="SubCategories" />
-            <End Role="Attributes" EntitySet="Attributes" />
-          </AssociationSet>
           <AssociationSet Name="FK_Products_MainCategories" Association="WebStoreDBModel.FK_Products_MainCategories">
             <End Role="MainCategories" EntitySet="MainCategories" />
             <End Role="Products" EntitySet="Products" />
@@ -313,6 +302,7 @@
             <End Role="ProductImages" EntitySet="ProductImages" />
             <End Role="Products" EntitySet="Products" />
           </AssociationSet>
+          <EntitySet Name="AttributeItem" EntityType="WebStoreDBModel.AttributeItem" />
           </EntityContainer>
         <ComplexType Name="sp_helpdiagramdefinition_Result">
           <Property Type="Int32" Name="version" Nullable="true" />
@@ -330,7 +320,6 @@
             <PropertyRef Name="AttributeID" />
           </Key>
           <Property Name="AttributeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Subcat_ID" Type="Int32" Nullable="false" />
           <Property Name="Size" Type="Double" />
           <Property Name="Wight" Type="Double" />
           <Property Name="Width" Type="Double" />
@@ -338,7 +327,6 @@
           <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Gender" Type="Boolean" />
           <Property Name="Describtion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="SubCategories" Relationship="WebStoreDBModel.FK_Attributes_SubCategories" FromRole="Attributes" ToRole="SubCategories" />
           <NavigationProperty Name="Products" Relationship="WebStoreDBModel.Products_Attributes" FromRole="Attributes" ToRole="Products" />
         </EntityType>
         <EntityType Name="MainCategories">
@@ -381,7 +369,7 @@
           <Property Name="SubCategoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SubCategoryName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="MainCat_ID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Attributes" Relationship="WebStoreDBModel.FK_Attributes_SubCategories" FromRole="SubCategories" ToRole="Attributes" />
+          <Property Name="SelectedAttributes" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="MainCategories" Relationship="WebStoreDBModel.FK_SubCategories_MainCategories" FromRole="SubCategories" ToRole="MainCategories" />
           <NavigationProperty Name="Products" Relationship="WebStoreDBModel.FK_Products_SubCategories" FromRole="SubCategories" ToRole="Products" />
         </EntityType>
@@ -395,18 +383,6 @@
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
-        <Association Name="FK_Attributes_SubCategories">
-          <End Type="WebStoreDBModel.SubCategories" Role="SubCategories" Multiplicity="1" />
-          <End Type="WebStoreDBModel.Attributes" Role="Attributes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SubCategories">
-              <PropertyRef Name="SubCategoryID" />
-            </Principal>
-            <Dependent Role="Attributes">
-              <PropertyRef Name="Subcat_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Products_MainCategories">
           <End Type="WebStoreDBModel.MainCategories" Role="MainCategories" Multiplicity="1" />
           <End Type="WebStoreDBModel.Products" Role="Products" Multiplicity="*" />
@@ -451,6 +427,14 @@
           <End Type="WebStoreDBModel.ProductImages" Role="ProductImages" Multiplicity="*" />
           <End Type="WebStoreDBModel.Products" Role="Products" Multiplicity="*" />
         </Association>
+        <EntityType Name="AttributeItem">
+          <Key>
+            <PropertyRef Name="AttributeID" />
+          </Key>
+          <Property Name="AttributeID" Type="Int32" Nullable="false" />
+          <Property Name="Attributename" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsSelected" Type="Boolean" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -491,7 +475,6 @@
                 <ScalarProperty Name="Width" ColumnName="Width" />
                 <ScalarProperty Name="Wight" ColumnName="Wight" />
                 <ScalarProperty Name="Size" ColumnName="Size" />
-                <ScalarProperty Name="Subcat_ID" ColumnName="Subcat_ID" />
                 <ScalarProperty Name="AttributeID" ColumnName="AttributeID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -528,6 +511,7 @@
           <EntitySetMapping Name="SubCategories">
             <EntityTypeMapping TypeName="WebStoreDBModel.SubCategories">
               <MappingFragment StoreEntitySet="SubCategories">
+                <ScalarProperty Name="SelectedAttributes" ColumnName="SelectedAttributes" />
                 <ScalarProperty Name="MainCat_ID" ColumnName="MainCat_ID" />
                 <ScalarProperty Name="SubCategoryName" ColumnName="SubCategoryName" />
                 <ScalarProperty Name="SubCategoryID" ColumnName="SubCategoryID" />
@@ -561,6 +545,15 @@
               <ScalarProperty Name="ImageID" ColumnName="Image_ID" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="AttributeItem">
+            <EntityTypeMapping TypeName="WebStoreDBModel.AttributeItem">
+              <MappingFragment StoreEntitySet="AttributeItem">
+                <ScalarProperty Name="IsSelected" ColumnName="IsSelected" />
+                <ScalarProperty Name="Attributename" ColumnName="Attributename" />
+                <ScalarProperty Name="AttributeID" ColumnName="AttributeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

@@ -14,23 +14,20 @@ namespace WebStore.Models
     
     public partial class SubCategories
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SubCategories()
         {
-            this.Attributes = new HashSet<Attributes>();
             this.Products = new HashSet<Products>();
         }
     
         public int SubCategoryID { get; set; }
         public string SubCategoryName { get; set; }
         public int MainCat_ID { get; set; }
-        public virtual ICollection<Attributes> Attributes { get; set; }
+        public string SelectedAttributes { get; set; }
+    
         public virtual MainCategories MainCategories { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Products> Products { get; set; }
-    }
-    public class AttributeItem
-    {
-        public int AttributeID { get; set; }
-        public string AttributeName { get; set; }
-        public bool isSelected { get; set; }
+        public List<AttributeItem> selectedAttribute { get; set; }
     }
 }

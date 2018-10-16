@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebStore.Models;
+
 namespace WebStore.Controllers
 {
     public class AdminToolController : Controller
@@ -44,39 +46,73 @@ namespace WebStore.Controllers
         }
         public ActionResult SubCategory()
         {
+            Models.SubCategories SA = new Models.SubCategories();
             List<AttributeItem> itemlist = new List<AttributeItem>();
-            itemlist.Add(new AttributeItem { AttributeID = 1, AttributeName = "Has Size", isSelected = true });
-            itemlist.Add(new AttributeItem { AttributeID = 2, AttributeName = "Has Color", isSelected = true });
-            itemlist.Add(new AttributeItem { AttributeID = 3, AttributeName = "Has High", isSelected = true });
-            itemlist.Add(new AttributeItem { AttributeID = 4, AttributeName = "Has Wight", isSelected = true });
-            itemlist.Add(new AttributeItem { AttributeID = 5, AttributeName = "Has Width", isSelected = true });
-            itemlist.Add(new AttributeItem { AttributeID = 6, AttributeName = "Has Description", isSelected = true });
-            itemlist.Add(new AttributeItem { AttributeID = 7, AttributeName = "Has Gender", isSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 0, Attributename = "Has Size", IsSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 1, Attributename = "Has Color", IsSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 2, Attributename = "Has High", IsSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 3, Attributename = "Has Wight", IsSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 4, Attributename = "Has Width", IsSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 5, Attributename = "Has Description", IsSelected = true });
+            itemlist.Add(new AttributeItem { AttributeID = 6, Attributename = "Has Gender", IsSelected = true });
 
-            List<MainCategories> MainCat_List = db.MainCategories.ToList();
-            ViewBag.CategoriesList = new SelectList(MainCat_List, "MainCategoryID", "MainCategoryName");
-            ViewBag.ItemAttribute = itemlist;
-            return View();
+            using (WebStoreDBEntities1 db = new WebStoreDBEntities1())
+            {
+                List<MainCategories> MainCat_List = db.MainCategories.ToList();
+                ViewBag.CategoriesList = new SelectList(MainCat_List, "MainCategoryID", "MainCategoryName");
+                List<SubCategories> sub_List = db.SubCategories.ToList();
+
+                ViewBag.subcatList = new SelectList(sub_List, "SubCategoryID", "SubCategoryName");
+                SA.selectedAttribute = itemlist;
+                ViewBag.ItemAttribute = itemlist;
+            }
+            return View(SA);
         }
         [HttpPost]
         public ActionResult SubCategory(SubCategories subcategories)
         {
+            var selectedAttribute = subcategories.selectedAttribute.Where(x => x.IsSelected == true).ToList();
+
             try
             {
                 SubCategories Cat = new SubCategories();
+                AttributeItem att = new AttributeItem();
                 Cat.SubCategoryName = subcategories.SubCategoryName;
                 Cat.MainCat_ID = subcategories.MainCat_ID;
+                //Cat.selectedAttribute = subcategories.selectedAttribute;
+                Cat.SelectedAttributes = string.Join(",", selectedAttribute.Select(x => x.AttributeID));
                 db.SubCategories.Add(Cat);
                 db.SaveChanges();
             }
-            catch (Exception)
+            catch (DbEntityValidationException e)
             {
-
-                throw;
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+                
             }
 
             return RedirectToAction("Index");
         }
+        //[HttpPost]
+
+        //public JsonResult Savelist(string itemList)
+        //{
+
+        //    string[] checkedarray = itemList.Split(',');
+        //    foreach (var item in checkedarray)
+        //    {
+        //        var x = item;
+        //    }
+        //    return Json("", JsonRequestBehavior.AllowGet);
+        //}
         //public ActionResult Attributes()
         //{
         //    List<SubCategories> sub_List = db.SubCategories.ToList();
@@ -109,4 +145,4 @@ namespace WebStore.Controllers
         //}
 
     }
-    }
+}
